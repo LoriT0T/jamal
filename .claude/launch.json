@@ -1,0 +1,6 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    { "name": "jamal", "runtimeExecutable": "npx", "runtimeArgs": ["-y","serve","-l","4173","."], "port": 4173 }
+  ]
+}
