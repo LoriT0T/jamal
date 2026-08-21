@@ -1,10 +1,14 @@
 /* Offline shell. Bump CACHE when assets change. */
-const CACHE = 'jamal-v3';
+const CACHE = 'jamal-v4';
 const ASSETS = ['./','./index.html','./manifest.webmanifest','./icon.svg','./icon-180.png',
   './icon-192.png','./icon-512.png','./css/app.css','./js/app.js','./js/data.js','./js/store.js'];
 
 self.addEventListener('install', e => {
-  e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)).then(() => self.skipWaiting()));
+  /* {cache:'reload'} matters: a plain addAll() fetches through the HTTP cache, so a
+     brand-new cache can be filled with the files it was created to replace. */
+  e.waitUntil(caches.open(CACHE)
+    .then(c => c.addAll(ASSETS.map(u => new Request(u, { cache: 'reload' }))))
+    .then(() => self.skipWaiting()));
 });
 self.addEventListener('activate', e => {
   e.waitUntil(caches.keys()
