@@ -60,7 +60,9 @@ export function toggle(id, d=today()){ isDone(id,d) ? uncomplete(id,d) : complet
 export function dueIn(r){
   const c = r.cadence, last = S.last[r.id];
   if (c.type === 'ondemand') return null;
-  if (!last) return 0;
+  /* Never done, long interval: there is no backlog to be "late" on — a fresh
+     install should not open with a 3-hour keratin treatment marked due today. */
+  if (!last) return (c.type === 'months' || (c.type === 'every' && c.n >= 14)) ? null : 0;
   const gap = since(last);
   if (c.type === 'daily')  return isDone(r.id) ? 1 : 0;
   if (c.type === 'every')  return c.n - gap;

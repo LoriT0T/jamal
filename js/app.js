@@ -47,7 +47,7 @@ function cadenceLabel(r){
 function dueLabel(r){
   if (S.isDone(r.id)) return '<span class="end">done</span>';
   const n = S.dueIn(r);
-  if (n === null) return '<span class="end">any time</span>';
+  if (n === null) return '<span class="end">' + (r.cadence.type === 'ondemand' ? 'any time' : 'not logged') + '</span>';
   if (n <  0) return '<span class="end over">' + (-n) + 'd late</span>';
   if (n === 0) return '<span class="end due">due</span>';
   if (n === 1) return '<span class="end">tomorrow</span>';

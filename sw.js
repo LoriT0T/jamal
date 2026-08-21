@@ -1,5 +1,5 @@
 /* Offline shell. Bump CACHE when assets change. */
-const CACHE = 'jamal-v2';
+const CACHE = 'jamal-v3';
 const ASSETS = ['./','./index.html','./manifest.webmanifest','./icon.svg','./icon-180.png',
   './icon-192.png','./icon-512.png','./css/app.css','./js/app.js','./js/data.js','./js/store.js'];
 
