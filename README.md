@@ -12,15 +12,15 @@ no account, no network. Everything lives in `localStorage` on the device.
 |---|---|
 | **Today** | What is due now, the next ritual, and the eight inside metrics (sleep, water, daylight, training, protein, no-spike, salah, calm). |
 | **Ritual** | Eleven sequenced routines with a step-by-step runner, timers, and the reasoning behind each step. Order carries most of the effect. |
-| **Fit** | The uniform: curated outfit formulas filtered by occasion and weather, ten rules, the never-list, palette, and garment care. |
+| **Fit** | The uniform: curated outfit formulas filtered by occasion and weather, twenty rules grouped by proportion / layering / colour / accessories / finish / judgement, the never-list, palette, and garment care. |
 | **Skin** | Root-cause protocols for back acne, closed comedones, redness, dark circles and hair — with a 0–4 daily rating, 14-day sparklines, and the 12-week adapalene ramp. |
 | **Log** | Adherence, streaks, a six-week heat grid, cabinet countdowns, 14-day inside averages, and one honest correlation drawn from your own data. |
 
 ## Rituals
 
-`Trim & Shave` · `Shower Protocol` · `Mouth & Detail` · `Get Ready — Face` · `Finish — Scent`
-· `Evening — Skin` · `Weekly Groom` (Fridays) · `Scalp Massage` · `Scalp Oil Treatment`
-· `Keratin Treatment` · `Weekly Audit` (Sundays)
+`Trim & Shave` · `Shower Protocol` · `Mouth & Detail` · `Fit Prep` · `Get Ready — Face`
+· `Hair — Style` · `Finish — Scent` · `Evening — Skin` · `Weekly Groom` (Fridays)
+· `Scalp Massage` · `Scalp Oil Treatment` · `Keratin Treatment` · `Weekly Audit` (Sundays)
 
 ## Design decisions worth knowing
 

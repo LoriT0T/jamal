@@ -199,7 +199,7 @@ function viewFit(){
 
   return '<div class="view">'
     + '<header class="masthead"><div class="date">The uniform</div><h2 class="page">Fit</h2>'
-      + '<div class="sub">A uniform beats a wardrobe: fewer decisions, higher floor. Pick the room and the weather; the book answers.</div></header>'
+      + '<div class="sub">A uniform beats a wardrobe: fewer decisions, higher floor. Pick the room and the weather; the book answers. Then prep the garment — half of how a fit lands is presentation, not choice.</div></header>'
 
     + '<div class="scroller" style="margin-bottom:9px">' + OCCASIONS.map(o =>
         '<button class="chip' + (FIT.occ===o.id?' on':'') + '" data-act="occ" data-id="' + o.id + '">' + esc(o.name) + '</button>').join('') + '</div>'
@@ -209,9 +209,16 @@ function viewFit(){
 
     + cards
 
-    + '<div class="sect"><div class="sect-h"><h3>The rules</h3></div><div class="card pad">'
-      + RULES.map((r,i) => '<div class="ruleitem"><div class="n">' + (i+1) + '</div><div><b>' + esc(r.t) + '</b><p>' + esc(r.d) + '</p></div></div>').join('')
-      + '</div></div>'
+    + '<div class="sect"><div class="sect-h"><h3>Before you leave</h3></div><div class="card pad">'
+      + '<b style="font-size:14.5px">Presentation is half the garment</b>'
+      + '<p class="small" style="margin-top:7px">Lint-rolled including the back of the shoulders · de-pilled · pressed to the fabric’s method · threads snipped flush · no deodorant marks · shoes wiped. An unpressed good coat looks worse than a pressed cheap one.</p>'
+      + '<button class="btn ghost" style="margin-top:14px" data-act="run" data-id="prep">Run Fit Prep</button></div></div>'
+
+    + [...new Set(RULES.map(r=>r.g))].map(g =>
+        '<div class="sect"><div class="sect-h"><h3>' + esc(g) + '</h3></div><div class="card pad">'
+        + RULES.filter(r=>r.g===g).map((r,i) =>
+            '<div class="ruleitem"><div class="n">' + (i+1) + '</div><div><b>' + esc(r.t) + '</b><p>' + esc(r.d) + '</p></div></div>').join('')
+        + '</div></div>').join('')
 
     + '<div class="sect"><div class="sect-h"><h3>Never</h3></div><div class="card pad">'
       + NEVER.map(n => '<div class="small no" style="padding:6px 0">— ' + esc(n) + '</div>').join('')
@@ -424,7 +431,7 @@ function doLog(step){
   if (step.log === 'lumify')  { S.mark('lumify');
     const n = S.marksIn('lumify', 7);
     if (n > 4) setTimeout(()=>toast(n + ' Lumify days this week — ease off'), 600); }
-  if (['pillow','hairoil','keratin'].includes(step.log)) S.cabDone(step.log);
+  if (['pillow','hairoil','keratin','dryclean'].includes(step.log)) S.cabDone(step.log);
 }
 
 function drawRun(){

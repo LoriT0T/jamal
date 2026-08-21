@@ -105,6 +105,39 @@ export const RITUALS = [
   ]
 },
 
+/* 3b ------------------------------------------------------------ */
+{
+  id:'prep', name:'Fit Prep', glyph:'▤', slot:'any', mins:12,
+  kicker:'The garment, before the body', cadence:{type:'ondemand'},
+  blurb:'Lint, press, de-pill, hang. Best done the night before.',
+  steps:[
+    { t:'Pick the fit first',
+      d:'Decide before you prep — pressing the wrong shirt is twelve minutes gone. Pick it the night before and the morning stops being a decision.',
+      goto:'#/fit' },
+    { t:'Press it — fabric decides the method',
+      d:'Cotton shirt: hot iron, slightly damp, and work in order — collar, cuffs, yoke, sleeves, body. Wool trousers: steam only, or a warm iron through a pressing cloth, pressing down and lifting rather than dragging. Knits: steam held just off the surface, never touching.',
+      note:{k:'watch', x:'A hot dry iron directly on wool is what puts that permanent shine on a trouser leg, and it does not come out. If a piece is wool, the default tool is steam, not contact. Never iron over buttons or a zip — go around them.'} },
+    { t:'De-pill — lay flat, tension the fabric',
+      d:'Fabric shaver over knits, wool and anything with a nap. Flatten the area over a table, hold it taut, work in one direction, and lift off before you reach a seam.',
+      note:{k:'why', x:'Pilling is the single strongest signal that a good garment has aged badly — and it is entirely reversible in about two minutes per piece. This is the highest return-per-minute maintenance in the whole wardrobe.'} },
+    { t:'Lint roll — including the back',
+      d:'Top down, whole garment, both sides. The back of the shoulders is the part you never see and everyone walking behind you does. On black wool, lint is more visible than the cut of the garment.',
+      secs:60 },
+    { t:'Threads, buttons, marks',
+      d:'Snip loose threads flush — never pull one, that is how a seam unravels. Check every button is tight, the hem is intact, and there are no white deodorant marks inside the collar or under the arms.' },
+    { t:'Shoes wiped, laces straight',
+      d:'Thirty seconds. Clean shoes carry a fit that is otherwise plain; scuffed shoes undo one that is otherwise perfect.',
+      secs:30 },
+    { t:'Hang it ready — properly',
+      d:'Broad wooden hanger for jackets and coats so the shoulder keeps its shape; wire hangers put a permanent dent in the shoulder line. Trousers clipped at the hem or folded over a felted bar so the crease falls straight. Shirt buttoned at the top. Two centimetres of air between garments — a crushed rail creases everything on it.',
+      note:{k:'watch', x:'Never hang knitwear. A hanger stretches the shoulders of a sweater permanently within a few wears — knits are folded, always. And never hang anything damp: that is how a wardrobe grows a smell you cannot iron out.'} },
+    { t:'Anything actually soiled goes in the dry-clean pile',
+      d:'Not everything worn — only what is genuinely marked. The fortnightly run is a batch, not a blanket policy.',
+      log:'dryclean',
+      note:{k:'why', x:'Dry cleaning solvent is hard on wool and strips the natural oils out of the fibre. Over-cleaning ages a good suit faster than wearing it does. Brush, steam and air between wears; send it when it is dirty, not on a timer.'} }
+  ]
+},
+
 /* 4 ------------------------------------------------------------- */
 {
   id:'ready', name:'Get Ready — Face', glyph:'◉', slot:'any', mins:10,
@@ -138,6 +171,35 @@ export const RITUALS = [
       note:{k:'why', x:'Lenses also mean the eye is drier by hour six, which is itself a cause of the redness you are treating at step two. Rewetting drops in the bag beats a second dose of Lumify.'} },
     { t:'Arm’s length, daylight, ten seconds',
       d:'Step back to a window. You are checking three things only: patchiness on the jaw and neck, brows even, nothing on the collar. Everything else is invisible to other people.' }
+  ]
+},
+
+/* 4b ------------------------------------------------------------ */
+{
+  id:'hairstyle', name:'Hair — Style', glyph:'≈', slot:'any', mins:9,
+  kicker:'Dry it into the shape', cadence:{type:'ondemand'},
+  blurb:'Towel, salt, dry, set. The shape is decided in the last 20% of drying.',
+  steps:[
+    { t:'Towel — squeeze and blot, never rub',
+      d:'Press the water out in sections. A microfibre towel or an old cotton t-shirt, not a terry bath towel.',
+      note:{k:'why', x:'Wet hair is at its weakest — the swollen keratin loses a large share of its strength, and the cuticle scales are lifted. Rubbing a rough towel across lifted scales is mechanical damage in the most literal sense, and it is the frizz you spend the rest of the routine fighting. This one habit is worth more than any product below it.'} },
+    { t:'Detangle damp, wide-tooth comb, ends first',
+      d:'Start at the ends and work up in short sections. Never take a brush to soaking hair — a brush pulls through knots that a comb would have released.' },
+    { t:'Sea salt spray on damp, not soaking',
+      d:'Mid-lengths and ends, a few pumps, scrunch it in with the hands. Keep it off the scalp.',
+      note:{k:'watch', x:'Salt spray works by roughening the cuticle slightly — the grip and texture are the damage, that is the mechanism. So treat it as an occasion product rather than a daily one, always condition the day you use it, and never layer it onto hair that is already dry and brittle.'} },
+    { t:'Blow dry — 80% hot, last 20% cool',
+      d:'Nozzle on, about fifteen centimetres away, dryer moving constantly. Direct the airflow from root to tip, following the shaft downward, which lies the cuticle flat instead of flaring it. Point the hair in the direction you want it to sit while it dries.',
+      secs:240,
+      note:{k:'why', x:'The shape sets as the hair cools, not while it is hot — so the last twenty percent on the cool setting is what actually holds the style, and it holds it far better than product does. Skipping the cool shot is why a blow-dry drops within the hour.'} },
+    { t:'Heat protectant if this is a habit',
+      d:'Once or twice a week, skip it. Most days of the week, use it — and non-negotiable while a keratin treatment is in.' },
+    { t:'Pomade — only if the length asks for it',
+      d:'Warm a small amount fully between the palms until it goes clear and almost disappears, then apply from the back of the head forward, roots last. Matte clay rather than shine for short hair.',
+      opt:true,
+      note:{k:'why', x:'Your hair is currently too short for this to do much, and short hair with visible product in it reads worse than short hair with none. Skip it until the length is back — that is what the optional flag is for. Blow-drying into shape is doing the work product would otherwise be asked to do badly.'} },
+    { t:'Neckline check in the mirror',
+      d:'Hair styled against a two-week-old neckline is an incoherent picture. If the edges have gone soft, that is the trimmer, not more product.' }
   ]
 },
 
@@ -325,25 +387,56 @@ export const NEVER = [
 ];
 
 export const RULES = [
-  { t:'Shoes set the ceiling',
-    d:'The whole fit is capped by the most casual thing you are wearing, and that is almost always the shoe. Walking shoes cap it at casual no matter what is above them. The black Arigato take you to semi-formal and no further — for anything above that you need a leather sole.' },
-  { t:'Contrast the fit, not the colour',
+  /* ---- proportion ---- */
+  { g:'Proportion', t:'The rule of thirds',
+    d:'Split yourself one-third to two-thirds, never in half. The hem of your top layer is the lever: sitting around the hip bone it gives roughly a third above and two thirds below, which reads long-legged and balanced. A hem landing at the mid-point of your height cuts you exactly in half — the most common proportion mistake there is, and the reason a good sweater can still look wrong. A long overcoat inverts it deliberately to two-thirds over one, which also works. Halves never do.' },
+  { g:'Proportion', t:'Contrast the fit, not the colour',
     d:'Relaxed on top wants clean and tapered below. Both loose reads sloppy; both slim reads try-hard. This one rule does more for a silhouette than any purchase.' },
-  { t:'Temperature has to agree',
-    d:'Black shoes pull the fit cool: grey, charcoal, navy, black, bone. Brown shoes pull it warm: camel, olive, cream, brown. Mixing the two is the most common quiet mistake in an otherwise good outfit.' },
-  { t:'One point of interest',
-    d:'The leather jacket, or the texture, or the colour — one of them. Everything else is quiet. This is the exact dial between "put together" and "trying to be seen", and it is what keeps you from reading as arrogant.' },
-  { t:'Texture instead of colour',
-    d:'Since you do not wear colour, the fit needs another axis or it goes flat: ribbed knit, flannel, wool with a visible weave, suede, matte leather. Three greys in three textures looks considered. Three greys in three cottons looks like laundry day.' },
-  { t:'No break, or a slight one',
+  { g:'Proportion', t:'Visual weight balances diagonally',
+    d:'Heavy or textured on top asks for something lean and smooth below. A chunky knit over wide trousers is two heavy blocks with no line between them. Bulk in one place is a statement; bulk everywhere is a shape.' },
+  { g:'Proportion', t:'No break, or a slight one',
     d:'Trousers should touch the top of the shoe and stop. A single soft break is fine. Fabric pooling at the ankle undoes an expensive trouser in one glance — and this is a five-pound alteration.' },
-  { t:'Collar out, no tie',
+  { g:'Proportion', t:'Shoes set the ceiling',
+    d:'The whole fit is capped by the most casual thing you are wearing, and that is almost always the shoe. Walking shoes cap it at casual no matter what is above them. The black Arigato take you to semi-formal and no further — for anything above that you need a leather sole.' },
+
+  /* ---- layering ---- */
+  { g:'Layering', t:'Thinnest to thickest, and each hem deliberate',
+    d:'Layers go fine to heavy outward. Hems should differ clearly — a shirt tail showing two centimetres below a knit reads accidental, showing five reads intended, showing none reads clean. What you cannot do is land within a centimetre of the layer above and hope.' },
+  { g:'Layering', t:'Every layer stands alone',
+    d:'If you take the outer layer off in a room, what remains has to be a complete outfit. A layer that only works as filler is a layer you will be stuck in all day.' },
+  { g:'Layering', t:'Collar out, no tie',
     d:'Your button-up under a crewneck or turtleneck: collar sits outside, cuffs may show a centimetre. Keep the collar structured enough to stand — a limp collar under a knit is the difference between deliberate and dishevelled.' },
-  { t:'Quality signals at conversational distance',
+  { g:'Layering', t:'Keep the fabric weights in one season',
+    d:'Linen under tweed, or a summer polo under a winter coat, reads as improvisation even when the colours agree. Weight is as visible as colour and gets checked far less often.' },
+
+  /* ---- colour ---- */
+  { g:'Colour', t:'Sixty, thirty, ten',
+    d:'One colour carries about 60% of the fit, a second about 30%, and roughly 10% is the accent — for you that is almost always a leather tone at the shoes, belt or strap. Three colours maximum, one of them a neutral base.' },
+  { g:'Colour', t:'Temperature has to agree',
+    d:'Black shoes pull the fit cool: grey, charcoal, navy, black, bone. Brown shoes pull it warm: camel, olive, cream, brown. Mixing the two is the most common quiet mistake in an otherwise good outfit.' },
+  { g:'Colour', t:'Texture instead of colour',
+    d:'Since you do not wear colour, the fit needs another axis or it goes flat: ribbed knit, flannel, wool with a visible weave, suede, matte leather. Three greys in three textures looks considered. Three greys in three cottons looks like laundry day.' },
+
+  /* ---- accessories ---- */
+  { g:'Accessories', t:'Three points, and usually one',
+    d:'Watch, glasses, ring — cap it at three and understand that for the look you want, one is normally the right answer. Every added point moves you from put-together toward performed.' },
+  { g:'Accessories', t:'Match metal to metal, leather to leather',
+    d:'All silver or all gold, never both. Belt leather matches shoe leather in colour and finish; a watch strap counts. This is the detail people cannot name but can always see.' },
+
+  /* ---- finish ---- */
+  { g:'Finish', t:'Presentation is half the garment',
+    d:'Lint-rolled including the back of the shoulders, de-pilled, pressed, no loose threads, clean shoes. An unpressed good coat looks worse than a pressed cheap one, and the difference costs ten minutes rather than money.' },
+  { g:'Finish', t:'Grooming is part of the outfit',
+    d:'A pressed fit over a two-week-old neckline is an incoherent picture. The fit and the face are read at the same time, by the same glance, and the weaker of the two sets the impression.' },
+  { g:'Finish', t:'Quality signals at conversational distance',
     d:'Nobody clocks the brand. They clock the drape of the fabric, whether the shoulder seam sits on your shoulder, and whether the shoes are clean. Those three are 80% of looking expensive, and none of them is a logo.' },
-  { t:'Dress for the room you are entering',
+
+  /* ---- judgement ---- */
+  { g:'Judgement', t:'One point of interest',
+    d:'The leather jacket, or the texture, or the colour — one of them. Everything else is quiet. This is the exact dial between "put together" and "trying to be seen", and it is what keeps you from reading as arrogant.' },
+  { g:'Judgement', t:'Dress for the room you are entering',
     d:'One notch above the room reads respectful. Two notches above reads as a statement about everyone else in it. As a student, one notch is your whole strategy.' },
-  { t:'Rain has an answer that is not a puffer',
+  { g:'Judgement', t:'Rain has an answer that is not a puffer',
     d:'Waxed cotton or an unlined technical mac in black or olive, worn over fine merino. In Derby that beats a puffer on warmth-per-bulk anyway — the puffer is warm for a walk to the car and useless once you are inside a building for six hours.' }
 ];
 
@@ -434,7 +527,10 @@ export const CARE = [
   { t:'Leather jacket', d:'Condition twice a year, never in direct sun, never in a plastic cover. Creases are the point — do not fight them.' },
   { t:'White-soled Arigato', d:'Magic sponge on the midsole while marks are fresh, leather cleaner on the upper, cream polish before the leather looks dry — not after.' },
   { t:'Brown Polo shoes', d:'Brush after each wear, conditioner every six weeks, cedar trees overnight. Rotate — never the same pair two days running.' },
-  { t:'Shirts', d:'Hang immediately out of the wash while damp; that alone removes most of the ironing. Collar stays in, always.' }
+  { t:'Shirts', d:'Hang immediately out of the wash while damp; that alone removes most of the ironing. Collar stays in, always.' },
+  { t:'Hanging', d:'Broad wooden hangers for jackets and coats — wire hangers dent the shoulder permanently. Trousers clipped at the hem or folded over a felted bar so the crease falls straight. Knitwear folded, never hung. Two centimetres of air between garments; a crushed rail creases everything on it. Nothing goes in damp.' },
+  { t:'Dry cleaning', d:'Run a batch every fortnight, but send only what is genuinely soiled. Solvent strips the natural oils out of wool, so over-cleaning ages a good piece faster than wearing it does — brush, steam and air between wears, and reserve the clean for actual marks. Anything that cannot afford to be dirty gets checked in that fortnightly pass rather than waiting for you to notice.' },
+  { t:'Pilling', d:'Fabric shaver over knits and wool every few wears: lay the area flat, hold it taut, one direction, lift before the seam. Two minutes a garment, and it is the difference between good knitwear and knitwear that looks finished.' }
 ];
 
 /* ------------------------------------------------------------------ *
@@ -572,5 +668,7 @@ export const CABINET = [
   { id:'keratin',  name:'Keratin treatment',  days:150,  cat:'Hair',   note:'Roughly five months. The app learns your real interval.' },
   { id:'hairoil',  name:'Scalp oil',          days:30,   cat:'Hair',   note:'Monthly. The massage is the part that matters.' },
   { id:'leather',  name:'Shoe conditioning',  days:42,   cat:'Wear',   note:'Brown Polos every six weeks. Cedar trees nightly.' },
-  { id:'depill',   name:'De-pill knitwear',   days:21,   cat:'Wear',   note:'Pilling is what makes good knitwear look cheap.' }
+  { id:'depill',   name:'De-pill knitwear',   days:21,   cat:'Wear',   note:'Pilling is what makes good knitwear look cheap.' },
+  { id:'dryclean', name:'Dry-clean run',      days:14,   cat:'Wear',   note:'Fortnightly batch. Send only what is actually soiled — solvent is hard on wool.' },
+  { id:'press',    name:'Press & lint kit',   days:60,   cat:'Wear',   note:'Iron soleplate clean, steamer descaled, lint roller with sheets left, shaver charged.' }
 ];
