@@ -1,5 +1,6 @@
 /* Jamāl — views + router. */
-import { CREED, RITUALS, RULES, NEVER, PALETTE, OCCASIONS, FITS, CARE, CONCERNS, INSIDE, CABINET } from './data.js';
+import { CREED, RITUALS, RULES, NEVER, PALETTE, OCCASIONS, FITS, CARE, CONCERNS, INSIDE, CABINET, SHELF, BASELINE } from './data.js';
+import * as M from './mirror.js';
 import * as S from './store.js';
 
 const $  = (s,r=document) => r.querySelector(s);
@@ -303,6 +304,270 @@ function viewSkin(){
 }
 
 /* ---------------------------------------------------------------- *
+ * FACE — on-device analysis
+ * ---------------------------------------------------------------- */
+let SHOTS = [], CAP = null;
+const capBox = $('#cap');
+
+const band = (v, cuts, names) => { for (let i=0;i<cuts.length;i++) if (v < cuts[i]) return names[i]; return names[names.length-1]; };
+
+function deltaTag(now, prev, goodDown = true){
+  if (prev == null || now == null) return '';
+  const d = +(now - prev).toFixed(1);
+  if (Math.abs(d) < 0.35) return '<span class="delta flat">no change</span>';
+  const better = goodDown ? d < 0 : d > 0;
+  return '<span class="delta ' + (better?'down':'up') + '">' + (d>0?'+':'') + d + '</span>';
+}
+
+function viewFace(){
+  return '<div class="view">'
+    + '<header class="masthead"><div class="date">Measured, not remembered</div><h2 class="page">Face</h2>'
+      + '<div class="sub">Photograph it, and the app measures shadow, redness and texture in the same coordinate frame every time. Your eye cannot detect a 5% change over six weeks. This can.</div></header>'
+    + '<div class="btn-row" style="margin-bottom:6px">'
+      + '<button class="btn" data-act="shoot" data-id="face">New face reading</button>'
+      + '<button class="btn ghost" data-act="shoot" data-id="back">Back</button></div>'
+    + '<div id="faceBody"><div class="card pad"><p class="small">Loading your readings…</p></div></div>'
+    + '</div>';
+}
+
+async function mountFace(){
+  const el = $('#faceBody'); if (!el) return;
+  SHOTS = await M.allShots().catch(()=>[]);
+  const face = SHOTS.filter(s => s.zone === 'face');
+  const back = SHOTS.filter(s => s.zone === 'back');
+  el.innerHTML = latestBlock(face, back) + baselineBlock() + protocolBlock() + shelfBlock() + methodBlock();
+}
+
+function latestBlock(face, back){
+  let out = '';
+  if (face.length){
+    const s = face[0], p = face[1], d = s.metrics._derived, pd = p ? p.metrics._derived : null;
+    const rows = [
+      ['Under-eye shadow', d.shadow, pd && pd.shadow, 'L* below cheek',
+        band(d.shadow, [4,8,13], ['minimal','mild','moderate','pronounced'])
+        + ' — how much darker the under-eye reads than the cheek directly below it. Geometry, so this number is meaningful on its own.'],
+      ['Cheek redness vs forehead', d.faceRed, pd && pd.faceRed, 'a* difference',
+        (d.faceRed > 2.5 ? 'cheeks measurably redder than forehead' : 'even across the face')
+        + ' — comparing the two cancels out your overall skin tone and the camera, so this travels between photos better than raw redness.'],
+      ['Cheek redness, absolute', d.cheekRed, pd && pd.cheekRed, 'a*',
+        'The red–green axis in CIE Lab. Useful against your own history, not against anyone else.'],
+      ['Forehead texture', d.foreheadTex, pd && pd.foreheadTex, 'gradient',
+        'Local lightness change across the skin — the proxy for bumps. Only comparable between photos lit the same way, which is why the shooting protocol matters.']
+    ];
+    out += '<div class="sect-h"><h3>Latest reading · ' + esc(new Date(s.ts).toLocaleDateString('en-GB',{day:'numeric',month:'short'})) + '</h3>'
+      + (face.length>1?'<span class="tiny">vs ' + esc(new Date(p.ts).toLocaleDateString('en-GB',{day:'numeric',month:'short'})) + '</span>':'<span class="tiny">baseline</span>') + '</div>'
+      + '<div class="card pad">'
+      + rows.map(([n,v,pv,u,note]) => v==null ? '' :
+          '<div class="zrow"><div class="zn">' + esc(n) + ' ' + deltaTag(v, pv) + '<em>' + esc(note) + '</em></div>'
+          + '<div class="zv">' + v + '<small>' + esc(u) + '</small></div></div>').join('')
+      + '</div>';
+
+    out += '<div class="sect"><div class="sect-h"><h3>By zone</h3></div><div class="card pad">'
+      + M.ZONES.map(z => { const m = s.metrics[z.id]; if (!m) return '';
+          const pm = p ? p.metrics[z.id] : null;
+          return '<div class="zrow"><div class="zn">' + esc(z.name)
+            + '<em>lightness ' + m.L + ' · redness ' + m.a + ' · texture ' + m.d + '</em></div>'
+            + '<div class="zv" style="font-size:13px">' + (pm ? deltaTag(m.a, pm.a) : '—') + '<small>redness</small></div></div>';
+        }).join('') + '</div></div>';
+
+    if (face.length > 1 || back.length){
+      out += '<div class="sect"><div class="sect-h"><h3>History</h3><span class="tiny">tap to delete</span></div><div class="strip">'
+        + SHOTS.map(x => '<figure><img src="' + x.thumb + '" data-act="delshot" data-id="' + x.id + '" alt="">'
+          + '<figcaption>' + esc(new Date(x.ts).toLocaleDateString('en-GB',{day:'numeric',month:'short'})) + '<br>' + esc(x.zone) + '</figcaption></figure>').join('')
+        + '</div></div>';
+    }
+  }
+  if (back.length){
+    const b = back[0], pb = back[1];
+    out += '<div class="sect"><div class="sect-h"><h3>Back · ' + esc(new Date(b.ts).toLocaleDateString('en-GB',{day:'numeric',month:'short'})) + '</h3></div><div class="card pad">'
+      + '<div class="zrow"><div class="zn">Inflamed lesion count ' + deltaTag(b.metrics.lesions, pb && pb.metrics.lesions)
+      + '<em>Clusters measurably redder than the surrounding skin. A proxy, not a diagnosis — it moves with lighting, so judge it over months and always shoot in the same spot.</em></div>'
+      + '<div class="zv">' + b.metrics.lesions + '<small>clusters</small></div></div>'
+      + '<div class="zrow"><div class="zn">Overall redness ' + deltaTag(b.metrics.a, pb && pb.metrics.a) + '<em>Mean a* across the back.</em></div>'
+      + '<div class="zv">' + b.metrics.a + '<small>a*</small></div></div></div></div>';
+  }
+  if (!face.length && !back.length){
+    out += '<div class="card pad"><p class="small">No readings yet. The first one is a baseline — it will not tell you whether your skin is good, only where it is starting from. That is the honest thing a single photo can do. The second one, six weeks later, is where this starts earning its place.</p></div>';
+  }
+  return out;
+}
+
+function baselineBlock(){
+  return '<div class="sect"><div class="sect-h"><h3>Starting read · ' + esc(BASELINE.date) + '</h3></div>'
+    + '<div class="card pad"><p class="small" style="color:var(--tx)">' + esc(BASELINE.headline) + '</p>'
+    + '<div style="margin-top:14px">' + BASELINE.reads.map(r =>
+        '<details><summary><span>' + esc(r.z) + ' — <span style="color:var(--tx-3);font-weight:400">' + esc(r.v) + '</span></span></summary>'
+        + '<div class="dbody">' + esc(r.d) + '</div></details>').join('') + '</div></div></div>';
+}
+
+function protocolBlock(){
+  return '<div class="sect"><div class="sect-h"><h3>Order of operations</h3></div><div class="card pad">'
+    + '<p class="tiny" style="margin-bottom:6px">Top to bottom. Doing them out of order is why most routines stall.</p>'
+    + '<div class="steps-n">' + BASELINE.order.map(o => '<div>' + esc(o) + '</div>').join('') + '</div></div></div>';
+}
+
+function shelfBlock(){
+  return '<div class="sect"><div class="sect-h"><h3>The shelf</h3></div>'
+    + '<div class="card pad"><p class="small">' + esc(SHELF.principle) + '</p></div>'
+    + SHELF.stacks.map(st =>
+        '<div class="sect"><div class="sect-h"><h3>' + esc(st.name) + '</h3></div><div class="card pad">'
+        + st.items.map(i =>
+            '<div class="prod"><h4>' + esc(i.n) + '<span class="pill ' + esc(i.tag) + '">' + esc(i.tag) + '</span></h4>'
+            + '<div class="pk">' + esc(i.pick) + '</div>'
+            + '<p>' + esc(i.why) + '</p>'
+            + '<div class="hw">' + esc(i.how) + '</div>'
+            + (i.note ? '<div class="hw" style="border-color:var(--acc-line);margin-top:7px">' + esc(i.note) + '</div>' : '')
+            + '<div class="pr">' + esc(i.price) + '</div></div>').join('')
+        + '</div></div>').join('')
+    + '<div class="sect"><div class="sect-h"><h3>Not on the shelf</h3></div><div class="card pad">'
+      + SHELF.avoid.map(a => '<div class="ruleitem"><div class="n">✕</div><div><b>' + esc(a.t) + '</b><p>' + esc(a.d) + '</p></div></div>').join('')
+      + '</div></div>'
+    + '<div class="sect"><div class="card pad" style="border-color:rgba(201,138,75,.4)">'
+      + '<b style="font-size:14.5px;color:var(--warn)">' + esc(SHELF.escalate.t) + '</b>'
+      + '<p class="small" style="margin-top:9px">' + esc(SHELF.escalate.d) + '</p></div></div>'
+    + '</div>';
+}
+
+function methodBlock(){
+  return '<div class="sect"><div class="sect-h"><h3>How to shoot it</h3></div><div class="card pad">'
+    + '<div class="steps-n">'
+    + '<div>Same place, same time of day. Light from a window at roughly 45° to one side — flat frontal light hides exactly the texture you are trying to measure.</div>'
+    + '<div>No flash, no filters, no beauty mode, no smoothing. Check the camera app is not applying one by default.</div>'
+    + '<div>Bare face. No tint, no sunscreen — both change the measured redness and the lightness.</div>'
+    + '<div>Neutral expression, head level, eyes open, hair off the forehead.</div>'
+    + '<div>For the back: same wall, same distance, arms relaxed down. Have someone take it, or use a timer and a mirror.</div>'
+    + '<div>Every six weeks is the right cadence. Skin moves on a twelve-week clock, and photographing it daily will only teach you what lighting does.</div>'
+    + '</div>'
+    + '<p class="tiny" style="margin-top:14px">Photos are stored in this browser on this device and are never uploaded — there is no server in this app to upload them to. Erasing your browser data erases them.</p>'
+    + '</div></div>';
+}
+
+/* ---- capture flow ---- */
+function shoot(mode){
+  const inp = document.createElement('input');
+  inp.type = 'file'; inp.accept = 'image/*';
+  inp.onchange = async () => {
+    const f = inp.files[0]; if (!f) return;
+    try {
+      const canvas = await M.loadImage(f);
+      CAP = { mode, canvas, pupils:[], light: M.lighting(canvas) };
+      capBox.hidden = false; document.body.style.overflow = 'hidden'; $('#nav').style.display = 'none';
+      mode === 'face' ? drawPin() : runBack();
+    } catch { toast('Could not read that image'); }
+  };
+  inp.click();
+}
+
+function closeCap(){
+  CAP = null; capBox.hidden = true; capBox.innerHTML = '';
+  document.body.style.overflow = ''; $('#nav').style.display = '';
+  render();
+}
+
+function lightWarn(){
+  const l = CAP.light;
+  if (l.ok && l.blown < 3) return '';
+  return '<div class="note warn"><b>Lighting</b><p>'
+    + (!l.ok ? (l.mean < 70 ? 'This shot is dark. Dark photos read as more redness and more shadow than there is.' : 'This shot is bright to the point of washing out. ')
+             : '')
+    + (l.blown >= 3 ? ' Around ' + l.blown + '% of it is blown to pure white, which erases texture.' : '')
+    + ' It will still be measured, but do not compare it against a photo shot in different light.</p></div>';
+}
+
+function drawPin(){
+  const c = CAP.canvas;
+  capBox.innerHTML =
+      '<div class="rn-top"><button class="x" data-act="capclose">✕</button><div class="ttl">Align</div><div class="ct">' + CAP.pupils.length + '/2</div></div>'
+    + '<div class="rn-body"><div class="rn-idx">Step 1</div>'
+    + '<h2>Tap the centre of each pupil</h2>'
+    + '<p class="detail">Left eye first, then right. This is what lets the app rescale and level every photo into the same frame — without it, a shot taken slightly closer would read as a different face.</p>'
+    + lightWarn()
+    + '<div class="capwrap" id="cw" style="margin-top:18px"></div></div>'
+    + '<div class="rn-foot"><div class="in">'
+      + '<button class="btn" data-act="capgo"' + (CAP.pupils.length<2?' disabled':'') + '>Analyse</button>'
+      + '<div class="btn-row"><button class="btn quiet" data-act="capreset">Clear points</button>'
+      + '<button class="btn quiet" data-act="capclose">Cancel</button></div></div></div>';
+
+  const wrap = $('#cw');
+  const disp = document.createElement('canvas');
+  const maxW = Math.min(wrap.clientWidth || 340, 420);
+  const sc = maxW / c.width;
+  disp.width = c.width * sc; disp.height = c.height * sc;
+  disp.getContext('2d').drawImage(c, 0, 0, disp.width, disp.height);
+  wrap.appendChild(disp);
+  CAP.scale = sc;
+  CAP.pupils.forEach(p => {
+    const pin = document.createElement('i');
+    pin.className = 'pin'; pin.innerHTML = '<b></b>';
+    pin.style.left = (p.x*sc) + 'px'; pin.style.top = (p.y*sc) + 'px';
+    wrap.appendChild(pin);
+  });
+  disp.onclick = e => {
+    if (CAP.pupils.length >= 2) return;
+    /* Map from displayed size, not bitmap size — CSS can scale the canvas and
+       then the two differ, which would silently offset every landmark. */
+    const r = disp.getBoundingClientRect();
+    CAP.pupils.push({
+      x: (e.clientX - r.left) * (c.width  / r.width),
+      y: (e.clientY - r.top)  * (c.height / r.height)
+    });
+    drawPin();
+  };
+}
+
+function runFace(){
+  const [a, b] = CAP.pupils;
+  const p1 = a.x <= b.x ? a : b, p2 = a.x <= b.x ? b : a;
+  const norm = M.normalise(CAP.canvas, p1, p2);
+  if (!norm){ CAP.pupils = []; drawPin(); toast('Those two points are too close together'); return; }
+  const metrics = M.analyseFace(norm);
+  /* If most regions came back empty the two taps did not land on the pupils —
+     say so, rather than presenting a confident reading of the wall behind him. */
+  const got = M.ZONES.filter(z => metrics[z.id]).length;
+  if (got < 5){ CAP.pupils = []; drawPin(); toast('That alignment missed — tap the pupils again'); return; }
+  CAP.result = { id:'s'+Date.now(), ts:Date.now(), zone:'face', metrics, thumb:M.thumb(norm, 380), light:CAP.light, zones:got };
+  showResult(norm);
+}
+function runBack(){
+  const metrics = M.analyseBack(CAP.canvas);
+  if (!metrics){ toast('Could not read that image'); closeCap(); return; }
+  CAP.result = { id:'s'+Date.now(), ts:Date.now(), zone:'back', metrics, thumb:M.thumb(CAP.canvas, 380), light:CAP.light };
+  showResult(CAP.canvas);
+}
+
+function showResult(canvas){
+  const r = CAP.result, prev = SHOTS.find(s => s.zone === r.zone);
+  let rows;
+  if (r.zone === 'face'){
+    const d = r.metrics._derived, pd = prev ? prev.metrics._derived : null;
+    rows = [
+      ['Under-eye shadow', d.shadow, pd&&pd.shadow, band(d.shadow,[4,8,13],['minimal','mild','moderate','pronounced'])],
+      ['Cheek vs forehead redness', d.faceRed, pd&&pd.faceRed, d.faceRed>2.5?'cheeks redder':'even'],
+      ['Cheek redness', d.cheekRed, pd&&pd.cheekRed, 'a*'],
+      ['Forehead texture', d.foreheadTex, pd&&pd.foreheadTex, 'gradient']
+    ];
+  } else {
+    rows = [
+      ['Inflamed clusters', r.metrics.lesions, prev&&prev.metrics.lesions, 'count'],
+      ['Overall redness', r.metrics.a, prev&&prev.metrics.a, 'a*'],
+      ['Lightness', r.metrics.L, prev&&prev.metrics.L, 'L*']
+    ];
+  }
+  capBox.innerHTML =
+      '<div class="rn-top"><button class="x" data-act="capclose">✕</button><div class="ttl">Reading</div><div class="ct"></div></div>'
+    + '<div class="rn-body"><div class="rn-idx">' + (prev ? 'Compared with your last' : 'Baseline') + '</div>'
+    + '<h2>' + (r.zone === 'face' ? 'Face' : 'Back') + '</h2>'
+    + '<div class="shot" style="margin:16px 0"><img src="' + r.thumb + '" alt=""></div>'
+    + rows.map(([n,v,pv,u]) => v==null ? '' :
+        '<div class="zrow"><div class="zn">' + esc(n) + ' ' + deltaTag(v,pv) + '</div>'
+        + '<div class="zv">' + v + '<small>' + esc(u) + '</small></div></div>').join('')
+    + (prev ? '' : '<div class="note"><b>Read this honestly</b><p>A single reading is a starting point, not a verdict. These numbers are calibrated against you and nobody else — there is no population norm here, and any app that gives you a score out of a hundred from one photo is making it up. Come back in six weeks.</p></div>')
+    + '</div>'
+    + '<div class="rn-foot"><div class="in"><button class="btn" data-act="capsave">Save reading</button>'
+    + '<div class="btn-row"><button class="btn quiet" data-act="capclose">Discard</button></div></div></div>';
+}
+
+/* ---------------------------------------------------------------- *
  * LOG
  * ---------------------------------------------------------------- */
 function viewLog(){
@@ -511,13 +776,14 @@ function stepMove(n){
 /* ---------------------------------------------------------------- *
  * ROUTER + EVENTS
  * ---------------------------------------------------------------- */
-const VIEWS = { '':viewHome, '/':viewHome, '/rituals':viewRituals, '/fit':viewFit, '/skin':viewSkin, '/log':viewLog };
-const NAVKEY = { '':'home', '/':'home', '/rituals':'rituals', '/fit':'fit', '/skin':'skin', '/log':'log' };
+const VIEWS = { '':viewHome, '/':viewHome, '/rituals':viewRituals, '/fit':viewFit, '/face':viewFace, '/skin':viewSkin, '/log':viewLog };
+const NAVKEY = { '':'home', '/':'home', '/rituals':'rituals', '/fit':'fit', '/face':'face', '/skin':'skin', '/log':'log' };
 
 function render(){
   const path = location.hash.replace(/^#/,'') || '/';
   const fn = VIEWS[path] || viewHome;
   app.innerHTML = fn();
+  if (path === '/face') mountFace();
   document.querySelectorAll('.nav a').forEach(a =>
     a.classList.toggle('on', a.dataset.nav === (NAVKEY[path]||'home')));
 }
@@ -557,6 +823,15 @@ document.addEventListener('click', e => {
 
     case 'cab-use':  S.cabUse(id); render(); break;
     case 'cab-done': S.cabDone(id); render(); toast('Reset'); break;
+
+    case 'shoot':    shoot(id); break;
+    case 'capclose': closeCap(); break;
+    case 'capreset': CAP.pupils = []; drawPin(); break;
+    case 'capgo':    runFace(); break;
+    case 'capsave':  M.saveShot(CAP.result).then(() => { closeCap(); toast('Reading saved'); }); break;
+    case 'delshot':
+      if (confirm('Delete this photo and its reading?')) M.delShot(id).then(() => render());
+      break;
 
     case 'export': {
       const blob = new Blob([S.dump()], {type:'application/json'});

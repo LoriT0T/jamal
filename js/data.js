@@ -672,3 +672,125 @@ export const CABINET = [
   { id:'dryclean', name:'Dry-clean run',      days:14,   cat:'Wear',   note:'Fortnightly batch. Send only what is actually soiled — solvent is hard on wool.' },
   { id:'press',    name:'Press & lint kit',   days:60,   cat:'Wear',   note:'Iron soleplate clean, steamer descaled, lint roller with sheets left, shaver charged.' }
 ];
+
+/* ------------------------------------------------------------------ *
+ * SHELF — the actual stack. Chosen by mechanism, not by who sells it.
+ * Every entry names the active first; the brand is only the cheapest
+ * reliable carrier of that active in the UK.
+ * ------------------------------------------------------------------ */
+export const SHELF = {
+  principle:'Four actives do almost all the work available to you without a prescription: a retinoid for follicle turnover, benzoyl peroxide for the bacterial and inflammatory half, azelaic acid for redness and marks, and SPF to stop the marks outlasting the spots. Everything else on a shelf is a delivery vehicle or a moisturiser wearing a lab coat. Buy the four, buy them boring, and give them twelve weeks.',
+  stacks:[
+  { id:'am', name:'Morning · face', items:[
+    { n:'Gentle non-foaming cleanser', a:'—', tag:'core', price:'~£10',
+      pick:'CeraVe Hydrating Cleanser, or La Roche-Posay Toleriane Hydrating',
+      why:'Your face runs red, not oily. Foaming sulfate cleansers raise skin pH and strip the barrier, and a stripped barrier both reddens faster and produces more oil to compensate. A cleanser has one job: remove the day. It cannot treat anything, so do not pay for one that claims to.',
+      how:'Lukewarm water, thirty seconds, hands only. No brushes, no flannels, no scrubs.' },
+    { n:'Azelaic acid 10%', a:'Azelaic acid', tag:'core', price:'~£10',
+      pick:'The Ordinary Azelaic Acid Suspension 10%',
+      why:'The single most useful molecule for your exact presentation. It is anti-inflammatory, mildly comedolytic, and it calms the visible redness — so it works on the cheeks and the forehead at once. Unlike a retinoid it does not sensitise you to sun, which is why it belongs in the morning. It is also one of the few actives that is safe to use continuously on olive skin without provoking the pigment rebound that harsher acids can cause.',
+      how:'Pea-sized, thin layer, after cleansing. It has a silicone base that can pill under sunscreen — press it in, wait two minutes, then sunscreen.',
+      note:'The prescription version, Skinoren 20%, is roughly twice the strength for a prescription charge. Worth asking for at the same appointment as the retinoid.' },
+    { n:'Sunscreen SPF50+', a:'UVA/UVB filters', tag:'core', price:'~£7–20',
+      pick:'Garnier Ambre Solaire Super UV Face Fluid SPF50+ (cheap, good) or La Roche-Posay Anthelios UVMune 400 (better texture, no cast)',
+      why:'This is not skin-cancer advice, it is mark-fading advice. Red post-acne marks are dilated capillaries in skin that is still inflamed; UV keeps that inflammation running and drives pigment into the mark as well. With daily SPF those marks clear over months. Without it, they can sit for years. If you only add one product from this entire page, add this one.',
+      how:'Two finger-lengths for face and neck. Your Rimmel tint goes on top if you want the coverage — a cosmetic tint is not a substitute for a real SPF50 base.' }
+  ]},
+  { id:'pm', name:'Evening · face', items:[
+    { n:'Cleanse — twice on tint days', a:'—', tag:'core', price:'~£10',
+      pick:'Any cleansing balm or oil first, then the same gentle cleanser',
+      why:'Sunscreen and tint left on overnight is the single most likely cause of the closed bumps on your forehead. This costs nothing and is the first thing to fix.',
+      how:'Balm on dry skin, emulsify with water, rinse, then the gentle cleanser.' },
+    { n:'Adapalene 0.1%', a:'Adapalene', tag:'prescription', price:'prescription charge',
+      pick:'Differin 0.1% gel — or Epiduo if the back is being treated too',
+      why:'The highest-evidence agent available for closed comedones, which is exactly what your forehead has. Retinoids speed the turnover of the follicle lining, so the plug never forms — they prevent rather than treat, which is why they are judged at twelve weeks and not twelve days. Adapalene specifically is the best tolerated of the retinoids and the least likely to leave you red.',
+      how:'One pea for the whole face, on dry skin. Twice weekly for two weeks, alternate nights for two, then nightly. Sandwich with moisturiser if it stings.',
+      note:'Over the counter in the US, but a pharmacy or GP item in the UK — confirm with your pharmacist. Treat that appointment as the single highest-value five minutes in this whole plan, because you can ask for the back at the same time.' },
+    { n:'Retinaldehyde 0.05–0.1%', a:'Retinal', tag:'alternative', price:'~£10–45',
+      pick:'The Ordinary Retinal 0.2% Emulsion (cheap) · Medik8 Crystal Retinal 3 then 6 (better) · Avène RetrinAL',
+      why:'If the prescription route stalls, this is the strongest thing you can buy over a counter. Retinal is one enzymatic step from retinoic acid, where retinol is two — meaningfully more potent per unit than retinol, and better tolerated than tretinoin.',
+      how:'Same ramp as adapalene. Never both on the same night.' },
+    { n:'Ceramide moisturiser', a:'Ceramides, niacinamide', tag:'core', price:'~£10',
+      pick:'CeraVe Facial Moisturising Lotion, or La Roche-Posay Toleriane Sensitive',
+      why:'The retinoid works by irritating the follicle slightly. Your job is to keep everything else calm so that irritation stays useful instead of becoming the new problem. Fragrance-free, no essential oils, nothing described as an oil-control formula.',
+      how:'Nightly. Twice nightly around the retinoid if you get flaking.' }
+  ]},
+  { id:'body', name:'Back and body', items:[
+    { n:'Benzoyl peroxide 5% wash', a:'Benzoyl peroxide', tag:'core', price:'~£10–12',
+      pick:'Acnecide 5% Wash (pharmacy) or PanOxyl 10% Foaming Wash if 5% is not enough after a month',
+      why:'Benzoyl peroxide kills C. acnes and, unlike an antibiotic, bacteria do not develop resistance to it — which is precisely why dermatologists pair it with antibiotics rather than choosing between them. A wash rather than a leave-on gel because the back is large, awkward to reach, and a wash gets contact everywhere in one pass.',
+      how:'Lather on the back and shoulders, leave two to five minutes while you do something else, rinse fully. Daily to start, alternate days if it dries you out.',
+      note:'It bleaches fabric permanently. White towel, old shirt, pale pillowcase.' },
+    { n:'Salicylic acid 2% for the body', a:'Salicylic acid', tag:'core', price:'~£12–30',
+      pick:'CeraVe SA Smoothing Cream, or any 2% BHA body spray with a long-reach trigger',
+      why:'Salicylic acid is oil-soluble, so unlike glycolic it actually gets down inside a follicle rather than working on the surface. On the back that matters, because the lesions are deeper and the skin is thicker. A spray applicator is not a gimmick here — it is the difference between treating your whole back and treating the parts you can reach.',
+      how:'After the shower, on dry skin, twice a week to start. Not on the same nights you use a strong BPO if it stings.' },
+    { n:'Long-handled brush', a:'—', tag:'core', price:'~£8',
+      pick:'Any soft long-handled body brush',
+      why:'Not for scrubbing. For getting the benzoyl peroxide onto the middle of your own back, which is otherwise the one place your hands do not reach and, predictably, the place the acne is worst.',
+      how:'Soft bristles, light pressure, product delivery only.' }
+  ]},
+  { id:'eye', name:'Under-eye — honestly', items:[
+    { n:'Fluticasone or beclometasone nasal spray', a:'Intranasal steroid', tag:'test', price:'~£8',
+      pick:'Pirinase or Beconase — pharmacy, over the counter',
+      why:'A diagnostic, not a cosmetic. If congestion is contributing, the veins draining your lower eyelid are engorged and the shadow is partly vascular — dermatology calls it an allergic shiner. Two weeks of a steroid nasal spray tells you how much of your shadow is allergic. If it lightens, you have found a cause that no eye cream addresses. If it does not, you have ruled it out for eight pounds.',
+      how:'Two weeks, as directed, alongside the saline you already use. Then judge.' },
+    { n:'Caffeine 5%', a:'Caffeine, EGCG', tag:'optional', price:'~£8',
+      pick:'The Ordinary Caffeine Solution 5% + EGCG',
+      why:'Mild, temporary vasoconstriction and a little decongestion of the area. Real but small, and it lasts hours rather than weeks. Worth eight pounds; not worth believing in.',
+      how:'Morning, tapped along the orbital bone, before sunscreen.' },
+    { n:'Ferritin blood test', a:'—', tag:'test', price:'NHS',
+      pick:'Ask at the same GP appointment',
+      why:'Low iron stores are a genuine and frequently missed cause of under-eye shadowing, and one test settles it permanently rather than being wondered about for years.',
+      how:'One blood draw. Ask for the actual number, not just "normal" — ferritin can be technically in range and still low enough to matter.' },
+    { n:'Peach corrector, not lighter concealer', a:'—', tag:'optional', price:'~£6',
+      pick:'Any peach or salmon-toned corrector, one shade deeper than instinct suggests',
+      why:'A blue-grey shadow needs the opposite side of the colour wheel to cancel it. Lighter concealer alone turns grey into pale grey, which reads ashy and is why most under-eye concealing looks like concealing.',
+      how:'Tiny amount, tapped in the inner triangle, then your normal concealer over it.' }
+  ]}
+  ],
+  avoid:[
+    { t:'Physical scrubs, brushes, exfoliating mitts',
+      d:'Every abrasive pass on skin that is already inflamed extends the red marks you are trying to remove. Your cheeks are the evidence.' },
+    { t:'Alcohol-based toners and classic aftershave',
+      d:'Denatured alcohol high in the ingredient list, on a face that flushes, is the fastest way to keep it flushing.' },
+    { t:'Squeezing anything that has no opening',
+      d:'A closed comedone has no pore to empty. Pressure ruptures the follicle wall under the skin, converting a bump nobody notices into a red mark that lasts two to six months. This is the mechanism that produced the marks on your cheeks. Stopping it is free and it is the highest-leverage single change on this page.' },
+    { t:'More than one new active at a time',
+      d:'If you start three things and your skin reacts, you have learned nothing and have to stop all three. One change, four weeks, then the next.' },
+    { t:'Vitamin C serums, for now',
+      d:'Frequently irritating, unstable, expensive, and it competes with the azelaic acid for the same slot. Revisit in a year if you feel like it.' },
+    { t:'Hydrocolloid patches on closed bumps',
+      d:'They draw fluid out of an open lesion. On a closed comedone there is nothing to draw, so they do nothing but sit there.' },
+    { t:'Anything fragranced, anywhere near the face',
+      d:'Fragrance is the most common contact allergen in skincare and buys you nothing at all.' }
+  ],
+  escalate:{
+    t:'The GP conversation, and why it is the highest-leverage thing here',
+    d:'Extensive truncal acne is the presentation most likely to scar and least likely to be controlled by anything you can buy. Topicals reach the surface; the back is thick-skinned and the lesions sit deep. A three-month course of an oral tetracycline alongside benzoyl peroxide is the standard next step and it is not a big intervention. If it is nodular, painful, or already leaving marks, isotretinoin exists and works, and the case for it is strongest while the scarring is still preventable. Book it. Ask in one appointment for: adapalene or Epiduo, azelaic acid, something oral for the back, and a ferritin test. That is one appointment that replaces two years of shelf-buying.'
+  }
+};
+
+/* Baseline read from the photo of 21 Aug 2026 — the reference every later
+   Mirror reading is compared against. */
+export const BASELINE = {
+  date:'2026-08-21',
+  headline:'Good structure, lean face, strong brows. The whole gap between how you look now and how you could look is skin evenness and the under-eye — nothing structural.',
+  reads:[
+    { z:'Under-eye', v:'The dominant feature', d:'Distinct shadowing that follows the orbital rim rather than sitting as a flat patch of colour — that pattern is a hollow casting a shadow more than it is pigment in the skin. Your leanness deepens it, and lean faces get it earlier. This is the single biggest visual lever on your face, and it is also the one least responsive to anything sold in a jar.' },
+    { z:'Cheeks', v:'Post-inflammatory erythema', d:'Several flat pink marks, most visible on your right cheek toward the nasolabial fold, with a mild diffuse flush across the mid-face. These are not scars and not active spots — they are dilated capillaries left behind after inflammation. They fade with time, sun protection and no further inflammation. They do not fade with treatment aimed at spots you no longer have.' },
+    { z:'Forehead', v:'Reads even here, which proves nothing', d:'Flat frontal light hides texture almost completely — closed comedones are visible in raking side light and by touch, not in a photo like this. Trust your fingertips over this image. That is why the Mirror asks you to shoot with light from one side.' },
+    { z:'Skin overall', v:'Normal-to-dry, slightly dull', d:'Not an oily face. There is little light reflecting off the cheekbones, which usually means dehydration or dead-cell buildup rather than anything wrong. That is the easiest thing on this list to change and the fastest to show.' },
+    { z:'Beard line', v:'Sparse at the chin, strong moustache', d:'The growth is patchy along the jaw and neck. Keeping a defined cheek line and a clean neck line makes patchy growth read as a deliberate choice instead of an unfinished shave — that is a trimmer decision, not a growth problem.' },
+    { z:'Hair', v:'Very short crop', d:'A grade-two buzz with brows as strong as yours works, but it maximises the visible forehead and makes the upper third of the face read long. When the length returns, a textured crop with a slight forward fringe rebalances the thirds. Worth a baseline hairline photo now, same angle, every three months.' },
+    { z:'Brows and bone structure', v:'Assets — leave them alone', d:'Dense, well-shaped brows and prominent cheekbones with a defined jaw. Nothing here needs work. Most of what people would try to change here would make it worse.' }
+  ],
+  order:[
+    'Stop the mechanism that makes new marks: no squeezing, no scrubbing.',
+    'Remove the tint properly every night. This is likely the forehead cause.',
+    'Daily SPF50, so the existing marks fade in months instead of years.',
+    'Get the retinoid started and ramped, then leave it alone for twelve weeks.',
+    'Book the GP for the back — that is the part that scars.',
+    'Test the under-eye: two weeks of a nasal steroid and one ferritin test.'
+  ]
+};

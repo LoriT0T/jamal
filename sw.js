@@ -1,7 +1,7 @@
 /* Offline shell. Bump CACHE when assets change. */
-const CACHE = 'jamal-v5';
+const CACHE = 'jamal-v7';
 const ASSETS = ['./','./index.html','./manifest.webmanifest','./icon.svg','./icon-180.png',
-  './icon-192.png','./icon-512.png','./css/app.css','./js/app.js','./js/data.js','./js/store.js'];
+  './icon-192.png','./icon-512.png','./css/app.css','./js/app.js','./js/data.js','./js/store.js','./js/mirror.js'];
 
 self.addEventListener('install', e => {
   /* {cache:'reload'} matters: a plain addAll() fetches through the HTTP cache, so a
