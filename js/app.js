@@ -780,12 +780,21 @@ const VIEWS = { '':viewHome, '/':viewHome, '/rituals':viewRituals, '/fit':viewFi
 const NAVKEY = { '':'home', '/':'home', '/rituals':'rituals', '/fit':'fit', '/face':'face', '/skin':'skin', '/log':'log' };
 
 function render(){
-  const path = location.hash.replace(/^#/,'') || '/';
+  const raw = location.hash.replace(/^#/,'') || '/';
+  const [path, query] = raw.split('?');
   const fn = VIEWS[path] || viewHome;
   app.innerHTML = fn();
   if (path === '/face') mountFace();
   document.querySelectorAll('.nav a').forEach(a =>
     a.classList.toggle('on', a.dataset.nav === (NAVKEY[path]||'home')));
+  /* Deep link from the hub: #/rituals?run=reset opens that ritual's runner directly,
+     so a task tapped on Dīwān lands in the ritual itself rather than on a list of
+     thirteen. The hash is then cleaned so Back does not re-open it. */
+  const run = query && new URLSearchParams(query).get('run');
+  if (run && RITUALS.some(r => r.id === run)) {
+    history.replaceState(null, '', '#' + path);
+    openRun(run);
+  }
 }
 
 document.addEventListener('click', e => {
