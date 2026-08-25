@@ -1,5 +1,6 @@
 /* Jamāl — views + router. */
 import { CREED, RITUALS, RULES, NEVER, PALETTE, OCCASIONS, FITS, CARE, CONCERNS, INSIDE, CABINET, SHELF, BASELINE } from './data.js';
+import * as PH from './photo.js';
 import * as M from './mirror.js';
 import * as S from './store.js';
 
@@ -188,7 +189,12 @@ function viewFit(){
     const layers = Object.entries(f.layers).map(([k,v]) =>
       '<div class="layer"><div class="lb">' + esc(k) + '</div><div class="pc">' + v.map(esc).join('<br>') + '</div></div>').join('');
     const recent = S.wornRecently(f.id);
+    /* The banner's search phrase comes from the garments themselves — the
+       Base and Bottom layers name the look better than any hand-written tag. */
+    const q = ['menswear outfit', (f.layers.Base||[])[0], (f.layers.Bottom||[])[0]]
+      .filter(Boolean).join(' ').replace(/,.*$/, '').slice(0, 80);
     return '<div class="fit-card" style="margin-bottom:12px">'
+      + '<div class="fit-photo" data-fitphoto="' + f.id + '" data-q="' + esc(q) + '"></div>'
       + '<div class="fit-head"><div class="kicker">' + esc(f.kicker) + '</div><h3>' + esc(f.name) + '</h3>'
         + (recent ? '<div class="tiny" style="margin-top:6px">Worn in the last few days</div>' : '') + '</div>'
       + '<div class="fit-layers">' + layers + '</div>'
@@ -780,6 +786,7 @@ const VIEWS = { '':viewHome, '/':viewHome, '/rituals':viewRituals, '/fit':viewFi
 const NAVKEY = { '':'home', '/':'home', '/rituals':'rituals', '/fit':'fit', '/face':'face', '/skin':'skin', '/log':'log' };
 
 function render(){
+  queueMicrotask(() => { try { PH.hydrate(document); } catch {} });
   const raw = location.hash.replace(/^#/,'') || '/';
   const [path, query] = raw.split('?');
   const fn = VIEWS[path] || viewHome;

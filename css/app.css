@@ -276,3 +276,13 @@ details .dbody ul{padding-left:17px;margin-top:7px} details .dbody li{margin-bot
 .steps-n div{counter-increment:s;position:relative;padding:9px 0 9px 30px;font-size:13.5px;color:var(--tx-2);line-height:1.55;border-bottom:1px solid var(--line)}
 .steps-n div:last-child{border-bottom:0}
 .steps-n div::before{content:counter(s);position:absolute;left:0;top:9px;font-family:var(--serif);color:var(--acc);font-size:14px}
+
+/* ── the fit book's photographs ─────────────────────────
+   A banner above the card, never behind the text. */
+.fit-card{overflow:hidden}
+.fit-photo{display:none;height:0;background-size:cover;background-position:center top;
+  position:relative;transition:height .3s ease}
+.fit-photo.has-img{display:block;height:150px}
+.ph-credit{position:absolute;right:8px;bottom:6px;font-size:9px;
+  color:rgba(255,255,255,.75);text-decoration:none;background:rgba(0,0,0,.35);
+  padding:1px 6px;border-radius:999px}
