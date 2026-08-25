@@ -804,7 +804,14 @@ document.addEventListener('click', e => {
 
   switch (a){
     case 'run':    openRun(id); break;
-    case 'tick':   S.toggle(id); render(); toast(S.isDone(id) ? 'Logged' : 'Unlogged'); break;
+    case 'tick': {
+      S.toggle(id);
+      const ok = S.save();          // second save is idempotent; its return is the truth
+      render();
+      toast(!ok ? 'Could not save — storage is full or blocked.'
+                : S.isDone(id) ? 'Logged' : 'Unlogged');
+      break;
+    }
     case 'close':  closeRun(); break;
     case 'finish': closeRun(); toast('Logged'); break;
     case 'next':   stepMove(1); break;
@@ -860,6 +867,10 @@ document.addEventListener('click', e => {
 });
 
 window.addEventListener('hashchange', render);
+/* Foregrounded after midnight: writes always used the live clock, but the
+   page kept showing yesterday until something repainted. Returning is the
+   repaint. */
+document.addEventListener('visibilitychange', () => { if (!document.hidden) render(); });
 render();
 
 if ('serviceWorker' in navigator) {

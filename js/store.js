@@ -23,7 +23,10 @@ function load(){
     return Object.assign(structuredClone(BLANK), JSON.parse(raw));
   } catch { return structuredClone(BLANK); }
 }
-export function save(){ try { localStorage.setItem(KEY, JSON.stringify(S)); } catch {} }
+export function save(){
+  try { localStorage.setItem(KEY, JSON.stringify(S)); return true; }
+  catch { return false; }   // callers may surface this; silence was a lie
+}
 export function state(){ return S; }
 export function reset(){ S = structuredClone(BLANK); save(); }
 
